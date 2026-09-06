@@ -93,15 +93,15 @@ The project can also be run using VS Code Live Server.
 
 Project Documentation
 Screenshots
-1. Home Page
+1. Home Page(screenshot/home-page.jpg)
 
 The main interface where users enter their situation and request an AI-generated verdict.
 
-2. User Input
+2. User Input(screenshot/user inputt.png)
 
 Example of a user entering a situation before requesting the verdict.
 
-3. AI Verdict
+3. AI Verdict(screenshot/AI verdict.png)
 
 The generated result showing the cooked percentage, severity level, and humorous official diagnosis.
 
