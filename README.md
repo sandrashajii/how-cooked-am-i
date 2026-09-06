@@ -92,18 +92,25 @@ Open index.html in a web browser.
 The project can also be run using VS Code Live Server.
 
 Project Documentation
-Screenshots
-1. Home Page(screenshot/home-page.jpg)
+## Screenshots
 
-The main interface where users enter their situation and request an AI-generated verdict.
+### 1. Home Page
 
-2. User Input(screenshot/user inputt.png)
+![Home Page](screenshot/home-page.jpg)
 
-Example of a user entering a situation before requesting the verdict.
+*The main interface where users enter their situation.*
 
-3. AI Verdict(screenshot/AI verdict.png)
+### 2. User Input
 
-The generated result showing the cooked percentage, severity level, and humorous official diagnosis.
+![User Input](screenshot/user%20inputt.png)
+
+*Example of a user entering a situation for AI analysis.*
+
+### 3. AI Verdict
+
+![AI Verdict](screenshot/AI%20verdict.png)
+
+*The AI-generated cooked percentage, severity level, and official diagnosis.*
 
 Workflow
 User enters situation
