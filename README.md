@@ -124,10 +124,6 @@ https://sandrashajii.github.io/how-cooked-am-i/
 
 The live application allows users to describe their situation and receive an AI-generated cooked score and humorous diagnosis.
 
-Video Demo
-
-Add your demo video link here.
-
 Additional Demos
 Live Website: https://sandrashajii.github.io/how-cooked-am-i/
 GitHub Repository: https://github.com/sandrashajii/how-cooked-am-i
