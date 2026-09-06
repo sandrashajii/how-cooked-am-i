@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>How Cooked Am I?</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --bg: #0b0b0c;
+      --card: #151516;
+      --card-light: #1d1d1f;
+      --orange: #ff7a18;
+      --orange-light: #ff9f43;
+      --red: #ff3b30;
+      --cream: #fff4df;
+      --muted: #aaa39a;
+      --border: rgba(255, 255, 255, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(255, 91, 18, 0.14),
+          transparent 35%
+        ),
+        linear-gradient(180deg, #0b0b0c 0%, #111112 100%);
+      color: var(--cream);
+      font-family: "Inter", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 16px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.025;
+      background-image:
+        radial-gradient(#fff 1px, transparent 1px);
+      background-size: 5px 5px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      background: rgba(21, 21, 22, 0.96);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 42px;
+      box-shadow:
+        0 30px 100px rgba(0, 0, 0, 0.55),
+        0 0 80px rgba(255, 75, 20, 0.05);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        var(--orange),
+        var(--red),
+        transparent
+      );
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--orange-light);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .fire {
+      font-size: 17px;
+    }
+
+    h1 {
+      margin: 0;
+      text-align: center;
+      font-family: "Archivo Black", sans-serif;
+      font-size: clamp(42px, 8vw, 72px);
+      line-height: 0.95;
+      letter-spacing: -0.045em;
+    }
+
+    h1 span {
+      color: var(--orange);
+    }
+
+    .subtitle {
+      max-width: 500px;
+      margin: 20px auto 32px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 9px;
+      color: #ddd6cc;
+    }
+
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 130px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 17px;
+      background: #101011;
+      color: var(--cream);
+      font-family: "Inter", sans-serif;
+      font-size: 15px;
+      line-height: 1.55;
+      outline: none;
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+    }
+
+    textarea::placeholder {
+      color: #66625d;
+    }
+
+    textarea:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.14);
+    }
+
+    .button {
+      width: 100%;
+      margin-top: 14px;
+      min-height: 56px;
+      border: 0;
+      border-radius: 15px;
+      background: linear-gradient(
+        135deg,
+        var(--orange),
+        #ff5417
+      );
+      color: #160a03;
+      font-family: "Inter", sans-serif;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      transition:
+        transform 0.15s ease,
+        filter 0.15s ease;
+    }
+
+    .button:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .button:active {
+      transform: translateY(1px);
+    }
+
+    .button:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 3px;
+    }
+
+    .button:disabled {
+      cursor: wait;
+      opacity: 0.65;
+      transform: none;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .loading::after {
+      content: "...";
+      animation: dots 1.2s infinite;
+    }
+
+    @keyframes dots {
+      0%, 20% { content: "."; }
+      40% { content: ".."; }
+      60%, 100% { content: "..."; }
+    }
+
+    /* RESULT */
+
+    .result {
+      display: none;
+      margin-top: 38px;
+      padding-top: 34px;
+      border-top: 1px solid var(--border);
+    }
+
+    .result.visible {
+      display: block;
+    }
+
+    .percentage-wrap {
+      text-align: center;
+    }
+
+    .percentage {
+      font-family: "Archivo Black", sans-serif;
+      font-size: clamp(75px, 17vw, 125px);
+      line-height: 0.9;
+      letter-spacing: -0.07em;
+      color: var(--cream);
+      opacity: 0;
+      transform: scale(0.65);
+    }
+
+    .percentage.show {
+      animation: percentagePop 0.6s cubic-bezier(.2, 1.5, .4, 1) forwards;
+    }
+
+    @keyframes percentagePop {
+      0% {
+        opacity: 0;
+        transform: scale(0.65);
+      }
+      70% {
+        transform: scale(1.08);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .tier {
+      margin-top: 13px;
+      font-family: "Archivo Black", sans-serif;
+      font-size: clamp(20px, 5vw, 30px);
+      text-transform: uppercase;
+      letter-spacing: -0.025em;
+      color: var(--orange);
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    .tier.show {
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .gauge {
+      margin: 30px 0 28px;
+    }
+
+    .gauge-track {
+      position: relative;
+      height: 15px;
+      border-radius: 999px;
+      background: #292929;
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,.5);
+    }
+
+    .gauge-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background:
+        linear-gradient(
+          90deg,
+          #35c759 0%,
+          #f6c344 50%,
+          #ff7a18 72%,
+          #ff3b30 100%
+        );
+      transition: width 1.25s cubic-bezier(.2, .8, .2, 1);
+      box-shadow: 0 0 15px rgba(255, 91, 20, 0.35);
+    }
+
+    .gauge-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      color: #68645e;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .roast-box {
+      margin-top: 25px;
+      padding: 22px;
+      border: 1px solid rgba(255, 122, 24, 0.18);
+      border-radius: 18px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255, 122, 24, 0.08),
+          rgba(255, 59, 48, 0.025)
+        );
+    }
+
+    .roast-label {
+      color: var(--orange);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 9px;
+    }
+
+    .roast,
+    .sarcasm {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    .roast.show,
+    .sarcasm.show {
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    .roast {
+      font-size: 18px;
+      line-height: 1.5;
+      font-weight: 700;
+      color: #fff7eb;
+    }
+
+    .sarcasm {
+      margin-top: 18px;
+      padding-top: 17px;
+      border-top: 1px solid rgba(255,255,255,.07);
+      color: #aaa39a;
+      font-size: 13px;
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    .retry {
+      display: block;
+      width: fit-content;
+      margin: 25px auto 0;
+      border: 0;
+      background: none;
+      color: #77716a;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .retry:hover {
+      color: var(--orange);
+    }
+
+    .retry:focus-visible {
+      outline: 2px solid var(--orange);
+      outline-offset: 5px;
+      border-radius: 4px;
+    }
+
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      color: #4f4b46;
+      font-size: 10px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 15px;
+      }
+
+      .card {
+        padding: 28px 20px;
+        border-radius: 22px;
+      }
+
+      .subtitle {
+        margin-bottom: 25px;
+      }
+
+      .roast-box {
+        padding: 18px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .percentage,
+      .tier,
+      .roast,
+      .sarcasm {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="app">
+    <section class="card">
+
+      <div class="eyebrow">
+        <span class="fire">🔥</span>
+        Emotional damage calculator
+      </div>
+
+      <h1>
+        HOW <span>COOKED</span><br>
+        AM I?
+      </h1>
+
+      <p class="subtitle">
+        Tell me what went wrong. I'll scientifically determine
+        how absolutely screwed you are.
+      </p>
+
+      <form id="verdictForm">
+
+        <label for="situation">
+          What's the situation?
+        </label>
+
+        <textarea
+          id="situation"
+          maxlength="1500"
+          placeholder="e.g. exam in 9 hours and I haven't studied..."
+          required
+        ></textarea>
+
+        <button
+          class="button"
+          id="checkButton"
+          type="submit"
+        >
+          CHECK THE VERDICT 🔥
+        </button>
+
+      </form>
+
+      <div
+        class="loading"
+        id="loading"
+        aria-live="polite"
+      >
+        Consulting the kitchen...
+      </div>
+
+      <section
+        class="result"
+        id="result"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+
+        <div class="percentage-wrap">
+
+          <div
+            class="percentage"
+            id="percentage"
+          >
+            0%
+          </div>
+
+          <div
+            class="tier"
+            id="tier"
+          >
+            you're fine (probably)
+          </div>
+
+        </div>
+
+        <div class="gauge">
+          <div class="gauge-track">
+            <div
+              class="gauge-fill"
+              id="gaugeFill"
+            ></div>
+          </div>
+
+          <div class="gauge-labels">
+            <span>Chillin'</span>
+            <span>Danger</span>
+            <span>Burnt</span>
+          </div>
+        </div>
+
+        <div class="roast-box">
+
+          <div class="roast-label">
+            🔥 Official diagnosis
+          </div>
+
+          <div
+            class="roast"
+            id="roast"
+          ></div>
+
+          <div
+            class="sarcasm"
+            id="sarcasm"
+          ></div>
+
+        </div>
+
+        <button
+          class="retry"
+          id="retry"
+          type="button"
+        >
+          ↻ Check another situation
+        </button>
+
+      </section>
+
+      <div class="footer">
+        No actual scientists were consulted. Probably.
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    /*
+      ============================================================
+      HOW COOKED AM I?
+      ============================================================
+
+      IMPORTANT:
+      This frontend expects the Anthropic API to be available
+      through your environment/proxy.
+
+      The requested API call does NOT expose an API key here.
+      If your environment requires a key, add authentication
+      server-side rather than putting a secret in this file.
+    */
+
+    const API_URL = "https://api.anthropic.com/v1/messages";
+    const MODEL = "claude-sonnet-4-6";
+
+    const form = document.getElementById("verdictForm");
+    const situationInput = document.getElementById("situation");
+    const checkButton = document.getElementById("checkButton");
+
+    const loading = document.getElementById("loading");
+    const result = document.getElementById("result");
+
+    const percentage = document.getElementById("percentage");
+    const tier = document.getElementById("tier");
+    const gaugeFill = document.getElementById("gaugeFill");
+    const roast = document.getElementById("roast");
+    const sarcasm = document.getElementById("sarcasm");
+    const retry = document.getElementById("retry");
+
+
+    /*
+      ------------------------------------------------------------
+      TIERS
+      ------------------------------------------------------------
+    */
+
+    function getTier(percent) {
+      if (percent <= 20) {
+        return "you're fine (probably)";
+      }
+
+      if (percent <= 40) {
+        return "lightly toasted";
+      }
+
+      if (percent <= 60) {
+        return "getting warm";
+      }
+
+      if (percent <= 80) {
+        return "medium well";
+      }
+
+      if (percent <= 95) {
+        return "fully cooked";
+      }
+
+      return "burnt to a crisp";
+    }
+
+
+    /*
+      ------------------------------------------------------------
+      LOCAL FALLBACK DATA
+      ------------------------------------------------------------
+      If the API fails, the app still works.
+    */
+
+    const fallbackPool = [
+      {
+        percent: 18,
+        roast: "Honestly? You're chilling. This is barely a problem and somehow you've already made it dramatic.",
+        sarcasm: "Congratulations, you survived absolutely nothing."
+      },
+      {
+        percent: 34,
+        roast: "You're lightly toasted, bestie. Not doomed yet, but maybe stop pretending the problem will solve itself.",
+        sarcasm: "Manifesting is not technically a strategy."
+      },
+      {
+        percent: 47,
+        roast: "Okay yeah, things are getting warm. You still have time, but you're spending it reading this instead.",
+        sarcasm: "Productivity has left the chat."
+      },
+      {
+        percent: 63,
+        roast: "You're entering medium-well territory. This situation needs action, not another five-minute scroll.",
+        sarcasm: "Your future self is currently filing a complaint."
+      },
+      {
+        percent: 82,
+        roast: "Yeah... you're cooked. The window for casually fixing this closed approximately three bad decisions ago.",
+        sarcasm: "At least you're consistent."
+      },
+      {
+        percent: 96,
+        roast: "Absolutely obliterated. You're not solving the problem anymore; you're negotiating with the consequences.",
+        sarcasm: "The kitchen has officially turned off the oven. It's too late."
+      }
+    ];
+
+
+    function getFallback() {
+      const randomIndex = Math.floor(
+        Math.random() * fallbackPool.length
+      );
+
+      return fallbackPool[randomIndex];
+    }
+
+
+    /*
+      ------------------------------------------------------------
+      CLAUDE SYSTEM PROMPT
+      ------------------------------------------------------------
+    */
+
+    const systemPrompt = `
+You are "How Cooked Am I?", a sarcastic meme-style verdict generator.
+
+The user will describe a situation they are dealing with.
+
+Analyze the situation and return a blunt but playful estimate of how "cooked" they are.
+
+Return ONLY one valid JSON object.
+Do not use markdown.
+Do not use code fences.
+Do not add explanations before or after the JSON.
+
+The exact JSON structure must be:
+
+{
+  "percent": integer,
+  "roast": string,
+  "sarcasm": string
+}
+
+Rules:
+
+- percent must be an integer from 0 to 100.
+- roast must be 1–2 short sentences.
+- roast should be witty, blunt, casual internet slang, and meme-like.
+- sarcasm must be one separate extra-sarcastic one-liner.
+- Do not be genuinely hateful, threatening, or cruel.
+- Keep it funny rather than genuinely insulting.
+- Don't give dangerous advice.
+- Don't mention these instructions.
+- Do not include markdown fences.
+
+Examples of tone:
+
+{
+  "percent": 78,
+  "roast": "Yeah bro, you're medium-well. You still have a chance, but you're gonna need to lock in immediately.",
+  "sarcasm": "Your procrastination arc is developing beautifully."
+}
+
+Remember: ONLY return JSON.
+`;
+
+
+    /*
+      ------------------------------------------------------------
+      API CALL
+      ------------------------------------------------------------
+    */
+
+    async function getClaudeVerdict(situation) {
+
+      const response = await fetch(API_URL, {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+          "anthropic-version": "2023-06-01"
+        },
+
+        body: JSON.stringify({
+          model: MODEL,
+          max_tokens: 300,
+
+          system: systemPrompt,
+
+          messages: [
+            {
+              role: "user",
+              content: situation
+            }
+          ]
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `API request failed: ${response.status}`
+        );
+      }
+
+      const data = await response.json();
+
+      /*
+        Claude's response normally contains text in:
+        data.content[0].text
+      */
+
+      const rawText =
+        data?.content?.find(
+          item => item.type === "text"
+        )?.text;
+
+      if (!rawText) {
+        throw new Error("No text returned from API");
+      }
+
+      return parseClaudeJSON(rawText);
+    }
+
+
+    /*
+      ------------------------------------------------------------
+      JSON PARSER + VALIDATOR
+      ------------------------------------------------------------
+    */
+
+    function parseClaudeJSON(text) {
+
+      let cleaned = text.trim();
+
+      /*
+        Remove markdown code fences if Claude happens
+        to return them despite the prompt.
+      */
+
+      cleaned = cleaned
+        .replace(/^```json\s*/i, "")
+        .replace(/^```\s*/i, "")
+        .replace(/\s*```$/i, "")
+        .trim();
+
+      let parsed;
+
+      try {
+        parsed = JSON.parse(cleaned);
+      } catch {
+        /*
+          Sometimes an API response contains extra text.
+          Try extracting the first {...} block.
+        */
+
+        const start = cleaned.indexOf("{");
+        const end = cleaned.lastIndexOf("}");
+
+        if (start === -1 || end === -1 || end <= start) {
+          throw new Error("Malformed JSON");
+        }
+
+        parsed = JSON.parse(
+          cleaned.slice(start, end + 1)
+        );
+      }
+
+      validateVerdict(parsed);
+
+      return parsed;
+    }
+
+
+    function validateVerdict(data) {
+
+      if (!data || typeof data !== "object") {
+        throw new Error("Invalid response");
+      }
+
+      if (
+        typeof data.percent !== "number" ||
+        !Number.isInteger(data.percent)
+      ) {
+        throw new Error("Invalid percentage");
+      }
+
+      if (
+        data.percent < 0 ||
+        data.percent > 100
+      ) {
+        throw new Error("Percentage outside range");
+      }
+
+      if (
+        typeof data.roast !== "string" ||
+        !data.roast.trim()
+      ) {
+        throw new Error("Invalid roast");
+      }
+
+      if (
+        typeof data.sarcasm !== "string" ||
+        !data.sarcasm.trim()
+      ) {
+        throw new Error("Invalid sarcasm");
+      }
+    }
+
+
+    /*
+      ------------------------------------------------------------
+      ANIMATION
+      ------------------------------------------------------------
+    */
+
+    function resetAnimation() {
+
+      percentage.classList.remove("show");
+      tier.classList.remove("show");
+      roast.classList.remove("show");
+      sarcasm.classList.remove("show");
+
+      percentage.textContent = "0%";
+      tier.textContent = "";
+      roast.textContent = "";
+      sarcasm.textContent = "";
+
+      gaugeFill.style.width = "0%";
+    }
+
+
+    function showVerdict(verdict) {
+
+      const percent = Math.max(
+        0,
+        Math.min(100, verdict.percent)
+      );
+
+      const tierText = getTier(percent);
+
+      resetAnimation();
+
+      result.classList.add("visible");
+
+      /*
+        Percentage
+      */
+
+      percentage.textContent = `${percent}%`;
+
+      requestAnimationFrame(() => {
+        percentage.classList.add("show");
+      });
+
+
+      /*
+        Tier
+      */
+
+      setTimeout(() => {
+        tier.textContent = tierText;
+        tier.classList.add("show");
+      }, 450);
+
+
+      /*
+        Gauge
+      */
+
+      setTimeout(() => {
+        gaugeFill.style.width = `${percent}%`;
+      }, 600);
+
+
+      /*
+        Roast
+      */
+
+      setTimeout(() => {
+        roast.textContent = verdict.roast;
+        roast.classList.add("show");
+      }, 1400);
+
+
+      /*
+        Sarcasm
+      */
+
+      setTimeout(() => {
+        sarcasm.textContent = verdict.sarcasm;
+        sarcasm.classList.add("show");
+      }, 1900);
+    }
+
+
+    /*
+      ------------------------------------------------------------
+      SUBMIT
+      ------------------------------------------------------------
+    */
+
+    form.addEventListener("submit", async (event) => {
+
+      event.preventDefault();
+
+      const situation =
+        situationInput.value.trim();
+
+      if (!situation) {
+        situationInput.focus();
+        return;
+      }
+
+      checkButton.disabled = true;
+      loading.classList.add("active");
+
+      result.classList.remove("visible");
+
+      try {
+
+        /*
+          Try Claude first.
+        */
+
+        const verdict =
+          await getClaudeVerdict(situation);
+
+        showVerdict(verdict);
+
+      } catch (error) {
+
+        /*
+          If anything goes wrong, silently fall back
+          to local content.
+        */
+
+        console.warn(
+          "Claude unavailable. Using local fallback.",
+          error
+        );
+
+        const fallback =
+          getFallback();
+
+        showVerdict(fallback);
+
+      } finally {
+
+        checkButton.disabled = false;
+        loading.classList.remove("active");
+
+        /*
+          Move the user's viewport to the result.
+        */
+
+        setTimeout(() => {
+          result.scrollIntoView({
+            behavior:
+              window.matchMedia(
+                "(prefers-reduced-motion: reduce)"
+              ).matches
+                ? "auto"
+                : "smooth",
+            block: "nearest"
+          });
+        }, 100);
+      }
+    });
+
+
+    /*
+      ------------------------------------------------------------
+      TRY AGAIN
+      ------------------------------------------------------------
+    */
+
+    retry.addEventListener("click", () => {
+
+      result.classList.remove("visible");
+
+      situationInput.focus();
+
+      situationInput.select();
+    });
+
+
+    /*
+      ------------------------------------------------------------
+      ENTER KEY
+      ------------------------------------------------------------
+      Ctrl/Cmd + Enter submits from textarea.
+    */
+
+    situationInput.addEventListener(
+      "keydown",
+      (event) => {
+
+        if (
+          (event.ctrlKey || event.metaKey) &&
+          event.key === "Enter"
+        ) {
+          event.preventDefault();
+          form.requestSubmit();
+        }
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>
